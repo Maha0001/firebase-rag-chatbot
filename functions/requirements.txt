@@ -1,0 +1,12 @@
+Flask
+Werkzeug
+firebase-admin
+firebase-functions
+google-cloud-firestore
+google-cloud-storage
+langchain
+langchain-community  # <-- ADDED THIS
+langchain-google-genai
+numpy
+pypdf
+python-dotenv

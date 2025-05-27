@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // User's own data structure
+    match /users/{userId}/{document=**} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // More specific rules for clarity (covered by the above, but good for explicitness)
+    // Metadata about processed files
+    match /users/{userId}/processed_files_metadata/{fileMetaId} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Parent document for chunks (under processed_documents)
+    match /users/{userId}/processed_documents/{docHash} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Actual chunks with embeddings
+    match /users/{userId}/processed_documents/{docHash}/chunks/{chunkId} {
+      allow read, write, delete: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}

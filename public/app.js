@@ -86,13 +86,19 @@ function appendMessageToChatUI(text, senderRole) { // senderRole: 'user' or 'bot
     
     const strong = document.createElement('strong');
     strong.textContent = senderRole === 'user' ? "You: " : "Bot: ";
-    
-    // Sanitize text before inserting as HTML to prevent XSS if response isn't fully trusted
-    // For simple text, textContent is safer. For Markdown-like newlines, use innerHTML carefully.
-    const contentSpan = document.createElement('span');
-    contentSpan.innerHTML = text.replace(/\n/g, '<br>'); // Basic newline handling
-
     messageDiv.appendChild(strong);
+
+    // Securely append text content, handling newlines by creating <br> elements
+    const contentSpan = document.createElement('span');
+    if (text) { // Ensure text is not null or undefined
+        const parts = text.split('\n');
+        parts.forEach((part, index) => {
+            contentSpan.appendChild(document.createTextNode(part));
+            if (index < parts.length - 1) {
+                contentSpan.appendChild(document.createElement('br'));
+            }
+        });
+    }
     messageDiv.appendChild(contentSpan);
     
     chatHistoryDiv.appendChild(messageDiv);
@@ -218,3 +224,33 @@ document.addEventListener('authSignedOut', () => {
     uploadStatusP.textContent = '';
     resetStatusP.textContent = '';
 });
+
+// --- Theme Handling Initialization ---
+// Imports from ui.js (conceptual, as app.js is the one importing)
+// import { themeSelect, applyTheme, loadSavedTheme } from './ui.js'; // This is how app.js would do it
+
+// Load saved theme on startup
+// This assumes loadSavedTheme and themeSelect are available (exported from ui.js and imported here)
+if (typeof loadSavedTheme === 'function') {
+    loadSavedTheme();
+} else {
+    console.warn("loadSavedTheme function not found. Ensure it's exported from ui.js and imported correctly in app.js if app.js is modular.");
+}
+
+// Event listener for theme selection
+// This assumes themeSelect is available (exported from ui.js and imported here)
+if (typeof themeSelect !== 'undefined' && themeSelect) { 
+    themeSelect.addEventListener('change', (event) => {
+        if (typeof applyTheme === 'function') {
+            const selectedTheme = event.target.value;
+            applyTheme(selectedTheme);
+            localStorage.setItem('selectedTheme', selectedTheme);
+        } else {
+            console.warn("applyTheme function not found during theme change event.");
+        }
+    });
+} else {
+    // This might be normal if app.js is not yet refactored to import themeSelect
+    // or if the element genuinely isn't in the DOM (which would be an HTML/ui.js issue).
+    console.warn("themeSelect element not found or not imported for event listener setup.");
+}

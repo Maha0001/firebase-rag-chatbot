@@ -27,8 +27,20 @@
     ],
     "rewrites": [
       {
-        "source": "/upload_pdf", "function":"api",
-        "source":"**", "destination": "/index.html"
+        "source": "/upload_pdf",
+        "function": "api"
+      },
+      {
+        "source": "/chat",
+        "function": "api"
+      },
+      {
+        "source": "/reset_user_data",
+        "function": "api"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
       }
     ]
   },

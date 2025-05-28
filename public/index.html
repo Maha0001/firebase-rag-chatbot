@@ -49,9 +49,20 @@
 
             <section id="controls-section">
                 <h2>Controls</h2>
-                <button id="clear-history-button">Clear Chat Display</button>
+                <button id="clear-history-button">Clear Chat Display</button>,
                 <button id="reset-data-button" class="button-danger">Reset My Backend Data</button>
                 <p id="reset-status" class="status-message"></p>
+
+                <div id="theme-selector-container">
+                    <h3>Select Theme</h3>
+                    <select id="theme-select">
+                        <option value="theme-default">Default</option>
+                        <option value="theme-sunset">Sunset</option>
+                        <option value="theme-ocean">Ocean Breeze</option>
+                        <option value="theme-forest">Forest Walk</option>
+                        <option value="theme-plum">Plum Velvet</option>
+                    </select>
+                </div>
             </section>
         </main>
 
@@ -60,7 +71,8 @@
         </footer>
     </div>
 
-    <script defer src="auth.js"></script> 
-    <script defer src="app.js"></script>   
+    <!-- ui.js and apiService.js are imported by app.js, so not directly included here -->
+    <script type="module" defer src="auth.js"></script> 
+    <script type="module" defer src="app.js"></script>   
 </body>
 </html>

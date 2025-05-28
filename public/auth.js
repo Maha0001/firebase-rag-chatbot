@@ -15,7 +15,15 @@ const auth = firebase.auth();
 
 // FirebaseUI config
 const uiConfig = {
-    signInSuccessUrl: window.location.href, 
+    // signInSuccessUrl: window.location.href, // Removed to prevent reload interference
+    callbacks: {
+        signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+            // User successfully signed in.
+            // Return true to indicate that we have handled the sign-in success.
+            // onAuthStateChanged will handle the UI updates.
+            return true;
+        }
+    },
     signInOptions: [
         firebase.auth.EmailAuthProvider.PROVIDER_ID,
         firebase.auth.GoogleAuthProvider.PROVIDER_ID
@@ -86,3 +94,6 @@ async function getIdToken() {
         throw new Error('No user currently signed in.');
     }
 }
+
+// Export getIdToken for use in other modules
+export { getIdToken };

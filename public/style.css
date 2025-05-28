@@ -1,39 +1,168 @@
+:root {
+    /* Default Theme (Light/Subtle or existing base colors) */
+    --gradient-start: #f4f7f6; /* Original light-bg */
+    --gradient-end: #e9ecef;   /* Slightly darker gray - example default */
+    --header-bg-start: #3498db; /* Original primary button color for header */
+    --header-bg-end: #2980b9;   /* Darker shade for header gradient */
+    --button-primary-bg-start: #3498db; 
+    --button-primary-bg-end: #2980b9;   
+    --button-danger-bg-start: #e74c3c;  
+    --button-danger-bg-end: #c0392b;    
+    
+    --body-text-color: #333; /* Original body text */
+    --header-text-color: white; /* Original header text */
+    --button-text-color: white;
+    --link-color: #3498db; /* Using primary button color for links */
+
+    /* Control text colors for elements on new gradient backgrounds */
+    --text-on-gradient-primary: white; 
+    --text-on-gradient-danger: white;  
+    --text-on-gradient-header: white; 
+    
+    --theme-transition-duration: 0.3s;
+
+    /* Keep original color names for compatibility if they are used by specific unchanged rules */
+    --original-primary-color: #3498db;
+    --original-secondary-color: #7f8c8d; /* For footer text */
+    --original-header-h1-color: #2c3e50;
+    --original-section-h2-color: #34495e;
+    --original-bot-message-bg: #e9ecef;
+    --original-bot-message-text: #333;
+    --original-user-message-bg: #3498db;
+    --original-user-message-text: white;
+    --original-border-color: #e0e0e0;
+}
+
+/* --- Theme: Sunset --- */
+body.theme-sunset {
+    --gradient-start: #ff7e5f; 
+    --gradient-end: #feb47b;   
+    --header-bg-start: #ff7e5f;
+    --header-bg-end: #e56242; 
+    --button-primary-bg-start: #ff7e5f;
+    --button-primary-bg-end: #e56242; 
+    --button-danger-bg-start: #ff8a50; /* Lighter danger for contrast */
+    --button-danger-bg-end: #ff7e5f;
+    --header-text-color: var(--text-on-gradient-header);
+    --button-text-color: var(--text-on-gradient-primary);
+    --link-color: #e56242;
+    --original-primary-color: #ff7e5f; /* Override for sections, user messages */
+    --original-header-h1-color: var(--text-on-gradient-header);
+    --original-section-h2-color: #e56242;
+}
+
+/* --- Theme: Ocean Breeze --- */
+body.theme-ocean {
+    --gradient-start: #00c6ff; 
+    --gradient-end: #0072ff;   
+    --header-bg-start: #00c6ff;
+    --header-bg-end: #0072ff;
+    --button-primary-bg-start: #00c6ff;
+    --button-primary-bg-end: #00a0cc; 
+    --button-danger-bg-start: #33d6ff;
+    --button-danger-bg-end: #00c6ff;
+    --header-text-color: var(--text-on-gradient-header);
+    --button-text-color: var(--text-on-gradient-primary);
+    --link-color: #0072ff;
+    --original-primary-color: #00c6ff;
+    --original-header-h1-color: var(--text-on-gradient-header);
+    --original-section-h2-color: #0072ff;
+}
+
+/* --- Theme: Forest Walk --- */
+body.theme-forest {
+    --gradient-start: #56ab2f; 
+    --gradient-end: #a8e063;   
+    --header-bg-start: #56ab2f;
+    --header-bg-end: #4a8e23; 
+    --button-primary-bg-start: #56ab2f;
+    --button-primary-bg-end: #4a8e23; 
+    --button-danger-bg-start: #7cbf50;
+    --button-danger-bg-end: #56ab2f;
+    --header-text-color: var(--text-on-gradient-header);
+    --button-text-color: var(--text-on-gradient-primary);
+    --link-color: #4a8e23;
+    --original-primary-color: #56ab2f;
+    --original-header-h1-color: var(--text-on-gradient-header);
+    --original-section-h2-color: #4a8e23;
+}
+
+/* --- Theme: Plum Velvet --- */
+body.theme-plum {
+    --gradient-start: #6a0dad; 
+    --gradient-end: #aa076b;  
+    --header-bg-start: #6a0dad;
+    --header-bg-end: #530a83; 
+    --button-primary-bg-start: #6a0dad;
+    --button-primary-bg-end: #530a83; 
+    --button-danger-bg-start: #8b20b3;
+    --button-danger-bg-end: #6a0dad;
+    --header-text-color: var(--text-on-gradient-header);
+    --button-text-color: var(--text-on-gradient-primary);
+    --link-color: #aa076b;
+    --original-primary-color: #6a0dad;
+    --original-header-h1-color: var(--text-on-gradient-header);
+    --original-section-h2-color: #aa076b;
+}
+
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f7f6;
-    color: #333;
+    background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    color: var(--body-text-color);
     line-height: 1.6;
+    transition: background-image var(--theme-transition-duration) ease-in-out, color var(--theme-transition-duration) ease-in-out;
 }
 
 #app-container {
     max-width: 900px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #fff;
+    background-color: #fff; /* Keep app container itself white or very light */
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
-header {
+/* Main header inside #app-container, not the #user-info header */
+#app-container > header { 
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 15px;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 20px;
+    padding: 1rem; /* Consistent padding */
+    margin-bottom: 20px; /* Original margin-bottom */
+    border-bottom: 1px solid var(--original-border-color); /* Use original border color or a themed one */
+    border-radius: 6px 6px 0 0; /* Rounded top corners */
+    background-image: linear-gradient(to right, var(--header-bg-start), var(--header-bg-end));
+    color: var(--header-text-color);
+    transition: background-image var(--theme-transition-duration) ease-in-out, color var(--theme-transition-duration) ease-in-out;
 }
 
-header h1 {
-    color: #2c3e50;
+#app-container > header h1 {
+    color: inherit; /* Inherit themed text color */
     margin: 0;
 }
 
-#user-info {
+#user-info { /* This is more like a sub-header or status bar */
     font-size: 0.9em;
     text-align: right;
+    padding: 0.5rem 1rem; /* Added padding */
+    background-color: #e9ecef; /* Default light gray */
+    color: var(--body-text-color); /* Default dark text */
+    border-bottom: 1px solid var(--original-border-color);
+    margin-bottom: 20px; /* Added margin to separate from sections */
+    display: flex; /* Align items */
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color var(--theme-transition-duration) ease-in-out;
 }
+/* Example to slightly theme user-info, could be more specific per theme */
+body:not([class=""]) #user-info { /* Apply if any theme class is present */
+    background-color: color-mix(in srgb, var(--gradient-end) 15%, #e9ecef);
+}
+
+
 #user-info p {
     margin: 0 0 5px 0;
 }
@@ -41,21 +170,28 @@ header h1 {
 section {
     margin-bottom: 30px;
     padding: 20px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid var(--original-border-color);
     border-radius: 6px;
-    background-color: #fdfdfd;
+    background-color: #fdfdfd; /* Keep sections light for readability */
 }
 
-h2 {
-    color: #34495e;
+h2 { /* Section headers */
+    color: var(--original-section-h2-color); /* Default color */
     margin-top: 0;
-    border-bottom: 2px solid #3498db;
+    border-bottom: 2px solid var(--original-primary-color); /* Default primary color for border */
     padding-bottom: 5px;
     display: inline-block;
+    transition: color var(--theme-transition-duration) ease-in-out, border-bottom-color var(--theme-transition-duration) ease-in-out;
 }
+/* Theming section headers */
+body.theme-sunset h2 { color: var(--original-section-h2-color); border-bottom-color: var(--original-primary-color); }
+body.theme-ocean h2 { color: var(--original-section-h2-color); border-bottom-color: var(--original-primary-color); }
+body.theme-forest h2 { color: var(--original-section-h2-color); border-bottom-color: var(--original-primary-color); }
+body.theme-plum h2 { color: var(--original-section-h2-color); border-bottom-color: var(--original-primary-color); }
+
 
 #chat-history-container {
-    border: 1px solid #ccc;
+    border: 1px solid var(--original-border-color);
     border-radius: 4px;
     background-color: #f9f9f9;
     margin-bottom: 10px;
@@ -80,23 +216,35 @@ h2 {
 
 .user-message {
     background-color: #3498db;
-    color: white;
+    color: var(--original-user-message-text); /* Use original user message text color */
     align-self: flex-end;
     border-bottom-right-radius: 5px; /* Bubble tail effect */
+    transition: background-color var(--theme-transition-duration) ease-in-out, color var(--theme-transition-duration) ease-in-out;
 }
+/* Themed user messages for better text contrast if needed */
+body:not([class=""]) .user-message {
+    color: var(--text-on-gradient-primary); /* Typically white */
+}
+
 
 .bot-message {
-    background-color: #e9ecef;
-    color: #333;
+    background-color: var(--original-bot-message-bg);
+    color: var(--original-bot-message-text);
     align-self: flex-start;
     border-bottom-left-radius: 5px; /* Bubble tail effect */
+    transition: background-color var(--theme-transition-duration) ease-in-out, color var(--theme-transition-duration) ease-in-out;
+}
+/* Example to slightly theme bot message background */
+body:not([class=""]) .bot-message {
+    background-color: color-mix(in srgb, var(--gradient-start) 10%, var(--original-bot-message-bg));
 }
 
-.bot-message strong { /* For "Bot:" prefix */
-    color: #2980b9;
+
+.bot-message strong { 
+    color: color-mix(in srgb, var(--original-primary-color) 80%, black); /* Darken themed primary for prefix */
 }
-.user-message strong {  /* For "User:" prefix */
-    color: #ecf0f1;
+.user-message strong { 
+    color: color-mix(in srgb, var(--text-on-gradient-primary) 80%, black); /* Slightly darken for prefix on gradient */
 }
 
 
@@ -119,36 +267,41 @@ button, input[type="file"] {
     font-size: 1em;
     padding: 10px 15px;
     border-radius: 4px;
-    border: none;
+    border: none; /* Original buttons had no border */
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-image var(--theme-transition-duration) ease-in-out, 
+                background-color var(--theme-transition-duration) ease-in-out, /* For solid fallback/disabled */
+                filter 0.2s ease-in-out,
+                color var(--theme-transition-duration) ease-in-out;
+    color: var(--button-text-color); /* Default to white, overridden if needed */
 }
 
 button.button-primary {
-    background-color: #3498db;
-    color: white;
+    background-image: linear-gradient(to right, var(--button-primary-bg-start), var(--button-primary-bg-end));
+    color: var(--button-text-color); /* Ensure this is applied */
 }
 button.button-primary:hover {
-    background-color: #2980b9;
+    filter: brightness(90%);
 }
 
 button.button-danger {
-    background-color: #e74c3c;
-    color: white;
+    background-image: linear-gradient(to right, var(--button-danger-bg-start), var(--button-danger-bg-end));
+    color: var(--button-text-color); /* Ensure this is applied */
 }
 button.button-danger:hover {
-    background-color: #c0392b;
+    filter: brightness(90%);
 }
 
 #logout-button, #reset-data-button, #clear-history-button {
      margin-left: 5px;
 }
+/* Clear history button can have a more neutral or secondary themed gradient */
 #clear-history-button{
-    background-color: #f39c12;
-    color:white;
+    background-image: linear-gradient(to right, color-mix(in srgb, var(--gradient-start) 60%, #bbb), color-mix(in srgb, var(--gradient-end) 60%, #999));
+    color: var(--body-text-color); /* Text color that contrasts with its specific background */
 }
 #clear-history-button:hover{
-    background-color: #e67e22;
+    filter: brightness(95%);
 }
 
 
@@ -190,11 +343,57 @@ footer {
     padding-top: 15px;
     border-top: 1px solid #e0e0e0;
     font-size: 0.9em;
-    color: #7f8c8d;
+    color: var(--original-secondary-color); /* Adapts with theme if --original-secondary-color is themed */
+    transition: color var(--theme-transition-duration) ease-in-out;
 }
+
+a {
+    color: var(--link-color);
+    transition: color var(--theme-transition-duration) ease-in-out;
+}
+a:hover {
+    color: color-mix(in srgb, var(--link-color) 70%, black);
+}
+
+/* Ensure disabled state is clear */
+button:disabled, input[type="file"]:disabled {
+    background-image: none !important; /* Important to override gradient */
+    background-color: #ccc !important;
+    color: #666 !important;
+    cursor: not-allowed !important;
+    filter: grayscale(50%) !important;
+}
+
 
 /* FirebaseUI styling overrides if needed */
 #firebaseui-auth-container {
     margin-top: 20px;
     margin-bottom: 30px;
+}
+
+/* New Theme Selector Styles */
+#theme-selector-container {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--original-border-color);
+}
+#theme-selector-container h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    color: var(--original-section-h2-color); /* Use same color as section titles */
+    transition: color var(--theme-transition-duration) ease-in-out;
+}
+body.theme-sunset #theme-selector-container h3 { color: var(--original-section-h2-color); }
+body.theme-ocean #theme-selector-container h3 { color: var(--original-section-h2-color); }
+body.theme-forest #theme-selector-container h3 { color: var(--original-section-h2-color); }
+body.theme-plum #theme-selector-container h3 { color: var(--original-section-h2-color); }
+
+
+#theme-select {
+    padding: 8px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--original-border-color);
+    background-color: white;
+    color: var(--body-text-color);
+    font-size: 0.9rem;
 }

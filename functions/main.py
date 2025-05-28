@@ -11,6 +11,8 @@ import re
 import hashlib
 # from pathlib import Path # Not strictly needed in this version
 import shutil # For /tmp cleanup
+import functools # For wraps decorator
+from typing import Callable, Tuple, Optional, Dict, Any # For type hints
 
 from dotenv import load_dotenv, find_dotenv
 from flask import Flask, request, jsonify
@@ -115,21 +117,51 @@ def get_file_hash(file_stream):
     file_stream.seek(0)
     return hasher.hexdigest()
 
-def get_user_id_from_request(http_request):
-    auth_header = http_request.headers.get('Authorization', '')
+# --- Authentication Helper and Decorator ---
+
+def _get_user_id_from_token() -> Tuple[Optional[str], Optional[Tuple[Dict[str, str], int]]]:
+    """
+    Verifies the Firebase ID token from the Authorization header and extracts the UID.
+
+    Internally uses flask.request to get the headers.
+
+    Returns:
+        Tuple[Optional[str], Optional[Tuple[Dict[str, str], int]]]: 
+            (uid, None) on successful verification.
+            (None, (error_dict, status_code)) on failure.
+    """
+    auth_header = request.headers.get('Authorization', '')
     if not auth_header.startswith('Bearer '):
-        return None, ('Missing or malformed authorization token', 401)
+        return None, ({"error": "Missing or malformed authorization token"}, 401)
+    
     id_token = auth_header.split('Bearer ')[-1]
     if not id_token:
-        return None, ('Missing authorization token', 401)
+        return None, ({"error": "Missing authorization token"}, 401)
+    
     try:
         decoded_token = auth.verify_id_token(id_token)
         return decoded_token['uid'], None
     except auth.InvalidIdTokenError:
-        return None, ('Invalid ID token', 403)
+        return None, ({"error": "Invalid ID token"}, 403)
     except Exception as e:
-        print(f"Error verifying token: {e}")
-        return None, (f'Token verification failed: {e}', 403)
+        print(f"Error verifying token: {e}") # Keep server-side log for debugging
+        return None, ({"error": f"Token verification failed"}, 403) # Generic message to client
+
+def require_auth(f: Callable[..., Any]) -> Callable[..., Any]:
+    """
+    Decorator for Flask routes that require Firebase authentication.
+    Verifies the ID token and injects the user ID (uid) into the route function.
+    """
+    @functools.wraps(f)
+    def decorated_function(*args, **kwargs):
+        uid, error_response_tuple = _get_user_id_from_token()
+        if error_response_tuple:
+            error_dict, status_code = error_response_tuple
+            return jsonify(error_dict), status_code
+        return f(uid, *args, **kwargs) # Pass uid as the first argument
+    return decorated_function
+
+# --- End Authentication ---
 
 def get_user_storage_path(uid):
     return f"user_uploads/{uid}/docs/"
@@ -157,8 +189,24 @@ def http_upload_pdf():
     if not current_embeddings_model:
         return jsonify({"error": "Embedding service not available. Check API key or server logs."}), 503
 
-    uid, error_tuple = get_user_id_from_request(request) # Renamed 'error' to 'error_tuple'
-    if error_tuple: return jsonify({"error": error_tuple[0]}), error_tuple[1]
+    # uid, error_tuple = get_user_id_from_request(request) # Renamed 'error' to 'error_tuple'
+    # if error_tuple: return jsonify({"error": error_tuple[0]}), error_tuple[1]
+    # This will be handled by the decorator. For now, we comment it out and assume uid is passed.
+    # For the purpose of this step, we'll imagine the decorator is already applied.
+    # Actual application will be shown conceptually for routes.py.
+    # Let's assume 'uid' is passed by the decorator for the rest of the function logic.
+    # For this file modification, we'll just remove the old call and proceed as if uid is available.
+    # This is a temporary state until routes are moved and decorator is fully applied.
+
+    # --- Placeholder for uid until decorator is applied in routes.py ---
+    # This is just to make the file runnable in its current state if needed,
+    # but the expectation is that 'uid' will come from the decorator.
+    uid_tuple = _get_user_id_from_token()
+    if uid_tuple[1] is not None: # Error occurred
+        return jsonify(uid_tuple[1][0]), uid_tuple[1][1]
+    uid = uid_tuple[0]
+    # --- End Placeholder ---
+
 
     # ... (rest of the /upload_pdf logic is THE SAME as the last full version)
     # Ensure you use `current_embeddings_model.embed_query(...)`
@@ -280,9 +328,16 @@ def http_chat():
     if not current_embeddings_model or not current_llm:
         return jsonify({"error": "AI services not available. Check API key or server logs."}), 503
 
-    uid, error_tuple = get_user_id_from_request(request) # Renamed 'error' to 'error_tuple'
-    if error_tuple: return jsonify({"error": error_tuple[0]}), error_tuple[1]
-    
+    # uid, error_tuple = get_user_id_from_request(request) # Renamed 'error' to 'error_tuple'
+    # if error_tuple: return jsonify({"error": error_tuple[0]}), error_tuple[1]
+    # Similar to above, this will be handled by the decorator.
+    # --- Placeholder for uid ---
+    uid_tuple = _get_user_id_from_token()
+    if uid_tuple[1] is not None: # Error occurred
+        return jsonify(uid_tuple[1][0]), uid_tuple[1][1]
+    uid = uid_tuple[0]
+    # --- End Placeholder ---
+
     # ... (rest of the /chat logic is THE SAME as the last full version)
     # Ensure you use `current_embeddings_model.embed_query(...)` and `chain = LLMChain(llm=current_llm, ...)`
     data = request.get_json()
@@ -405,9 +460,16 @@ def delete_collection_recursively(coll_ref, batch_size=100):
     return deleted_count
 
 @app.route('/reset_user_data', methods=['POST'])
-def http_reset_user_data():
-    uid, error_tuple = get_user_id_from_request(request) # Renamed 'error' to 'error_tuple'
-    if error_tuple: return jsonify({"error": error_tuple[0]}), error_tuple[1]
+def http_reset_user_data(): # uid will be injected by decorator
+    # uid, error_tuple = get_user_id_from_request(request) # Renamed 'error' to 'error_tuple'
+    # if error_tuple: return jsonify({"error": error_tuple[0]}), error_tuple[1]
+    # Similar to above, this will be handled by the decorator.
+    # --- Placeholder for uid ---
+    uid_tuple = _get_user_id_from_token()
+    if uid_tuple[1] is not None: # Error occurred
+        return jsonify(uid_tuple[1][0]), uid_tuple[1][1]
+    uid = uid_tuple[0]
+    # --- End Placeholder ---
 
     try:
         print(f"Initiating data reset for user {uid}...")
